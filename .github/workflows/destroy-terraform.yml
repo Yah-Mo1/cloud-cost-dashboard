@@ -1,4 +1,4 @@
-name: CD Workflow
+name: Destroy workflow
 
 on: workflow_dispatch
 
@@ -6,8 +6,8 @@ env:
   AWS_REGION: us-east-1
 
 jobs:
-  deploy:
-    name: Deploy to ECS using Terraform
+  destroy:
+    name: Destroy Terraform infrastructure
     runs-on: ubuntu-latest
     environment: production
     defaults:
