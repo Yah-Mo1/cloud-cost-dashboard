@@ -35,17 +35,5 @@ jobs:
       - name: Initialize Terraform
         run: terraform init
 
-      - name: Validate Terraform
-        run: terraform validate
-
-      - name: Format Terraform
-        run: terraform fmt
-
-      - name: Plan Terraform changes
-        run: terraform plan
-
-      - name: Apply Terraform changes
-        run: terraform apply -auto-approve
-
       - name: Destroy Terraform changes
         run: terraform destroy -auto-approve
