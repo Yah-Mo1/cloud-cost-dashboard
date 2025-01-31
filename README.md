@@ -21,4 +21,4 @@ Prerequisites: AWS account, Terraform installed, Docker setup. Instructions for 
 
 This project follows security best practices for cloud infrastructure and containerised deployments, ensuring that sensitive data is handled securely during the deployment process.
 
-![alt text](<Screenshot 2025-01-29 at 21.52.27.png>)
+![alt text](images/working-app.png)
