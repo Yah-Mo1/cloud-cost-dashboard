@@ -18,7 +18,7 @@ variable "operating_system_family" {
 variable "cpu_architecture" {
   description = "The CPU architecture"
   type        = string
-  default     = "ARM64"
+  default     = "X86_64"  //change from arm64 to x86 as i was having error with task earlier
 }
 
 variable "subnets" {

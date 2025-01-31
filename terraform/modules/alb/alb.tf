@@ -111,8 +111,8 @@ resource "aws_lb_target_group" "ecs_tg" {
  }
 
 }
-resource "aws_lb_target_group_attachment" "ecs-tg-group-attachment" {
+resource "aws_lb_target_group_attachment" "ecs-tg-group-attachment-aza" {
   target_group_arn = aws_lb_target_group.ecs_tg.arn
-  target_id        = "10.0.1.2"
+  target_id        = "10.0.3.4"
   port             = 3000
 }
