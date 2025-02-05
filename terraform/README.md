@@ -1,7 +1,3 @@
-Sure! Below is a comprehensive **README.md** that documents the purpose, structure, and usage of your Terraform configuration for deploying the Threat Model application using ECS.
-
----
-
 # **Terraform Infrastructure for Threat Model Application on ECS**
 
 This repository contains the Terraform configuration to deploy the **Threat Model** application using **Amazon ECS (Elastic Container Service)**. The infrastructure includes VPC, subnets, security groups, ECS cluster, Fargate tasks, ALB (Application Load Balancer), and other related resources required for hosting and managing the application.
