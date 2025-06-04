@@ -35,7 +35,7 @@ resource "aws_ecs_cluster_capacity_providers" "ecs-capacity_provider" {
 
 
 //ECS Task definition
-//TODO: Ensure ecr repositry uri is being referenced correctly
+//TODO: Ensure ecr repository uri is being referenced correctly
 resource "aws_ecs_task_definition" "ecs-task-definition" {
   family = "ecs-task-definition"
   network_mode          = "awsvpc"
