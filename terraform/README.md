@@ -88,7 +88,7 @@ Clone this repository to your local machine or remote system.
 
 ```bash
 git clone <repository-url>
-cd terraform-ecs-threat-model
+cd terraform
 ```
 
 ### 2. Initialize Terraform
