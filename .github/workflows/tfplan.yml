@@ -1,4 +1,4 @@
-name: CD Workflow
+name: Terraform Plan Workflow
 
 on:
   workflow_dispatch:
