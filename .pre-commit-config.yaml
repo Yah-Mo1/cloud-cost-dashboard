@@ -1,0 +1,38 @@
+# // This will be a pre-commit hook to check for terraform code changes
+# # // It should be run on all files in the terraform directory, and check for the following:
+# // - trivy
+# // - terraform validate
+# // - tflint
+# // - terraform fmt
+# // - checkov
+
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.99.4
+    hooks:
+      - id: terraform_fmt
+        files: ^terraform/
+        args:
+          - --args=-no-color
+          - --args=-diff
+          - --args=-write=false
+      - id: terraform_validate
+        files: ^terraform/
+      # - id: terraform_tflint
+      #   files: ^terraform/
+      #   args:
+      #     - --args=--format=json
+      #     - --args=--recursive
+      # - id: terraform_trivy
+      #   files: ^terraform/
+      #   args:
+      #     - --args=--format=json
+      #     - --args=--skip-dirs="**/.terraform"
+      # - id: terraform_checkov
+      #   files: ^terraform/
+      #   args:
+      #     - --args=-d
+      #     - --args=.
+      #     - --args=--quiet
+      #     - --args=--skip-check=CKV_AWS_260
+      #     - --args=--skip-check=CKV_AWS_382

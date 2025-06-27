@@ -11,13 +11,12 @@ This repository contains the Terraform configuration to deploy the **Threat Mode
 - [Module Inputs and Outputs](#module-inputs-and-outputs)
 - [Deployment Workflow](#deployment-workflow)
 - [Outputs](#outputs)
-- [Licensing](#licensing)
 
 ---
 
 ## **Overview**
 
-This Terraform configuration sets up the necessary AWS resources to deploy and manage a containerized application (referred to as the "Threat Model") on **AWS ECS using Fargate**. The infrastructure includes:
+This Terraform configuration sets up the necessary AWS resources to deploy and manage a containerised application (referred to as the "Threat Model") on **AWS ECS using Fargate**. The infrastructure includes:
 
 - **VPC** and **subnets** for network isolation.
 - **Security groups** to control access to the ECS service and load balancer.
@@ -26,13 +25,13 @@ This Terraform configuration sets up the necessary AWS resources to deploy and m
 - **ECR (Elastic Container Registry)** integration for container image storage.
 - **IAM roles** and policies for secure operation.
 
-The application is designed to be flexible and scalable, taking full advantage of AWS services for containerized applications.
+The application is designed to be flexible and scalable, taking full advantage of AWS services for containerised applications.
 
 ---
 
 ## **Modules Structure**
 
-The Terraform configuration is modularized into separate files and directories to keep the code clean and maintainable. The primary modules are:
+The Terraform configuration is modularised into separate files and directories to keep the code clean and maintainable. The primary modules are:
 
 1. **`vpc/`**:
 
@@ -47,7 +46,7 @@ The Terraform configuration is modularized into separate files and directories t
 3. **`ecs/`**:
 
    - Defines the **ECS cluster**, **task definitions**, and **ECS service**.
-   - Configures **Fargate** tasks with the containerized Threat Model application.
+   - Configures **Fargate** tasks with the containerised Threat Model application.
    - Integrates with the ALB for load balancing.
 
 4. **`ecr/`** (optional depending on your setup):
@@ -80,36 +79,66 @@ Before using this Terraform configuration, you need to have the following:
 
 ---
 
-## **Usage**
+# Infrastructure Setup Guide
 
-### 1. Clone the Repository
+This guide explains how to set up your infrastructure using this Terraform configuration and modules.
+
+---
+
+## 1. Clone the Repository
 
 Clone this repository to your local machine or remote system.
 
 ```bash
 git clone <repository-url>
-cd terraform-ecs-threat-model
+cd terraform
 ```
 
-### 2. Initialize Terraform
+## 2. Select or Create a Terraform Workspace
 
-Run the following command to initialize the Terraform environment. This will download the necessary providers and initialize your workspace.
+Terraform workspaces help manage multiple environments (e.g. `dev`, `stage`, `prod`) using the same configuration.
+
+List existing workspaces:
+
+```bash
+terraform workspace list
+```
+
+Create a new workspace (if it does not exist):
+
+```bash
+terraform workspace new dev
+```
+
+Or select an existing workspace:
+
+```bash
+terraform workspace select dev
+```
+
+Replace `dev` with `stage` or `prod` as appropriate.
+
+---
+
+## 3. Initialise Terraform
+
+Run the following command to initialise the Terraform environment. This will download the necessary providers and set up your workspace.
 
 ```bash
 terraform init
 ```
 
-### 3. Review and Configure Variables
+---
 
-Make sure to review and configure the `variables.tf` file or pass the necessary variables via `terraform.tfvars`. Key variables include:
+## 4. Review and Configure Variables
 
-- `azs` — Availability zones for subnets.
-- `vpc_cidr` — CIDR block for your VPC.
-- `public_subnet_cidrs` — CIDR blocks for public subnets.
-- `allowed_cidr_blocks` — The CIDR blocks allowed to access the ECS service.
-- `domain` — Your ACM domain for the load balancer SSL certificate.
+Each environment has its own `.tfvars` file in the `environments/` directory:
 
-You can create a `terraform.tfvars` file to specify your variable values:
+- `environments/dev.tfvars`
+- `environments/stage.tfvars`
+- `environments/prod.tfvars`
+
+Example variables defined in these files:
 
 ```hcl
 azs = ["us-west-2a", "us-west-2b"]
@@ -119,27 +148,62 @@ allowed_cidr_blocks = ["0.0.0.0/0"]
 domain = "example.com"
 ```
 
-### 4. Plan the Deployment
+Review and update these files as needed before planning or applying changes.
 
-Before applying the changes, run `terraform plan` to preview what changes will be made to your AWS environment.
+---
+
+## 5. Plan the Deployment
+
+Run `terraform plan`, specifying the relevant environment file:
 
 ```bash
-terraform plan
+terraform plan -var-file=environments/dev.tfvars
 ```
 
-This command will display the execution plan, showing you the resources that will be created, modified, or destroyed.
+Replace `dev.tfvars` with the appropriate file for your environment.
 
-### 5. Apply the Configuration
+This command previews the changes that will be applied to your AWS environment.
 
-Once you're satisfied with the plan, apply the configuration to create the infrastructure.
+---
+
+## 6. Apply the Configuration
+
+Apply the plan to build or update your infrastructure:
 
 ```bash
-terraform apply
+terraform apply -var-file=environments/dev.tfvars
 ```
 
 Confirm the action when prompted by typing `yes`.
 
 ---
+
+## Notes
+
+✅ **Best practice:** Commit your `*.tf` files but do **not** commit `.tfstate` or `.tfvars` files containing secrets (unless they are intended to be shared and contain no sensitive data). Use a remote backend (e.g. S3 + DynamoDB) for state storage in production.
+
+✅ **Workspace + tfvars:** The workspace and `tfvars` file should always correspond to the environment you are targeting to avoid accidental changes.
+
+---
+
+## Example Commands Cheat Sheet
+
+```bash
+# List workspaces
+terraform workspace list
+
+# Create a new workspace
+terraform workspace new dev
+
+# Select a workspace
+terraform workspace select dev
+
+# Plan with a specific tfvars file
+terraform plan -var-file=environments/dev.tfvars
+
+# Apply with a specific tfvars file
+terraform apply -var-file=environments/dev.tfvars
+```
 
 ## **Module Inputs and Outputs**
 
@@ -190,7 +254,7 @@ The workflow for deploying the Threat Model application is as follows:
 
 1. **Provision VPC**: The `vpc/` module creates a custom VPC, subnets, and route tables with internet access.
 2. **Set up Load Balancer**: The `alb/` module provisions an Application Load Balancer (ALB), including security groups, listeners, and target groups.
-3. **ECS Cluster**: The `ecs/` module creates an ECS cluster using Fargate, which is then used to deploy the containerized application.
+3. **ECS Cluster**: The `ecs/` module creates an ECS cluster using Fargate, which is then used to deploy the containerised application.
 4. **Container Deployment**: The container image (from ECR or a Docker registry) is deployed to ECS as part of the ECS task definition and service.
 5. **Routing Traffic**: Traffic is routed through the ALB to the ECS service based on the container ports defined.
 

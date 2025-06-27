@@ -1,25 +1,44 @@
-module "vpc" {
-  source = "./modules/vpc"  
+//Root Configuration Main File where modules are called
+
+module "networking" {
+  source             = "./modules/networking"
+  environment        = var.environment
+  vpc_cidr           = var.vpc_cidr
+  availability_zones = var.availability_zones
+  private_subnets    = var.private_subnets
+  public_subnets     = var.public_subnets
+  tags               = var.tags
 }
 
 module "alb" {
-  source     = "./modules/alb"
-  vpc_id = module.vpc.vpc_id
-  subnets = module.vpc.public_subnet_ids
-#   azs = module.vpc.azs
+  source          = "./modules/alb"
+  subnet_ids      = module.networking.public_subnets
+  alb_name        = var.alb_name
+  vpc_id          = module.networking.vpc_id
+  domain_name     = var.domain_name
+  tags            = var.tags
 }
 
 module "ecs" {
-  source = "./modules/ecs"
-  subnets = module.vpc.public_subnet_ids
-  alb_security_group = module.alb.alb_security_group_id
-  target_group_arn = module.alb.target_group_arn
-  vpc_id = module.vpc.vpc_id
+  source             = "./modules/ecs"
+  subnets            = module.networking.private_subnets
+  vpc_id             = module.networking.vpc_id
+  alb_security_group = module.alb.alb_security_group
+  target_group_arn   = module.alb.target_group_arn
 
 }
 
+module "autoscaling" {
+  source      = "./modules/autoscaling"
+  ecs_cluster = module.ecs.ecs_cluster_id
+  ecs_service = module.ecs.ecs_service_id
+}
+
 module "route53" {
-  source = "./modules/route53"
-  alb_dns_name = module.alb.load_balancer_dns_name
-  
+  source       = "./modules/route53"
+  record_name  = var.record_name
+  alb_dns_name = module.alb.alb_dns_name
+  domain_name  = var.domain_name
+  alb_zone_id  = module.alb.alb_zone_id
+
 }
