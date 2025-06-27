@@ -1,49 +1,73 @@
-<div align="center">
-    <img src="./images/coderco.jpg" alt="CoderCo" width="300"/>
-</div>
+# Welcome to your Lovable project
 
-# CoderCo Assignment 1 - Open Source App Hosted on ECS with Terraform 🚀
+## Project info
 
-This project is based on Amazon's Threat Composer Tool, an open source tool designed to facilitate threat modeling and improve security assessments. You can explore the tool's dashboard here: [Threat Composer Tool](https://awslabs.github.io/threat-composer/workspaces/default/dashboard)
+**URL**: https://lovable.dev/projects/0f5893f5-2e88-4bbf-a805-7d9f8c450742
 
-## Task/Assignment 📝
+## How can I edit this code?
 
-- Create your own repository and complete the task there. You may create a `app` in your repo and copy all the files in this directory into it. Or alternatively, you can use this directory as is. Your choice.
+There are several ways of editing your application.
 
-- Your task will be to create a container image for the app, push it to ECR (recommended) or DockerHub. Ideally, you should use a CI/CD pipeline to build, test, and push the container image.
+**Use Lovable**
 
-- Deploy the app on ECS using Terraform. All the resources should be provisioned using Terraform. Use TF modules.
+Simply visit the [Lovable Project](https://lovable.dev/projects/0f5893f5-2e88-4bbf-a805-7d9f8c450742) and start prompting.
 
-- Make sure the app is live on `https://tm.<your-domain>` or `https://tm.labs.<your-domain>`
+Changes made via Lovable will be committed automatically to this repo.
 
-- App must use HTTPS. Hosted on ECS. Figure out the rest. Once app is live, add screenshots to the README.md file.
+**Use your preferred IDE**
 
-- Add architecture diagram of how the infrastructure is setup. (Use Lucidchart or draw.io or mermaid) You are free to use any diagramming tool.
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-## Local app setup 💻
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-```bash
-yarn install
-yarn build
-yarn global add serve
-serve -s build
+Follow these steps:
 
-#yarn start
-http://localhost:3000/workspaces/default/dashboard
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
-## or
-yarn global add serve
-serve -s build
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
+
+# Step 3: Install the necessary dependencies.
+npm i
+
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
 ```
 
-## Useful links 🔗
+**Edit a file directly in GitHub**
 
-- [Terraform AWS Registry](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-- [Terraform AWS ECS](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_cluster)
-- [Terraform Docs](https://www.terraform.io/docs/index.html)
-- [ECS Docs](https://docs.aws.amazon.com/ecs/latest/userguide/what-is-ecs.html)
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-## Advice & Tips �
+**Use GitHub Codespaces**
 
-- This is just a simple app, you may use another app if you'd like. 
-- Use best practices for your Terraform code. Use best practices for your container image. Use best practices for your CI/CD pipeline.
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
+
+## What technologies are used for this project?
+
+This project is built with:
+
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
+
+## How can I deploy this project?
+
+Simply open [Lovable](https://lovable.dev/projects/0f5893f5-2e88-4bbf-a805-7d9f8c450742) and click on Share -> Publish.
+
+## Can I connect a custom domain to my Lovable project?
+
+Yes, you can!
+
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)

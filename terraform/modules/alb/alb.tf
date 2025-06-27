@@ -1,118 +1,119 @@
-//ALB --> Application load balancer
-//question: im working on creating security groups in terraform, how can i reference this ?
-//Should i just create security groups in the terminal and reference using data block ?
-
-// or alternatively just create the security group as youre creating the alb
-
-// ACM Certificate
+# This module creates an Application Load Balancer (ALB) with a target group and listeners.
 data "aws_acm_certificate" "issued" {
-  domain   = var.domain
-  statuses = ["ISSUED"]
+  domain      = var.domain_name
+  statuses    = ["ISSUED"]
+  most_recent = true
+
 }
 
-resource "aws_security_group" "alb_security_group" {
-  name        = "threatModel_alb_security_group"
-  description = "Threat Model load balancer security group"
+# S3 Bucket for ALB access logs
+resource "aws_s3_bucket" "alb_access_logs" {
+  bucket = "alb-access-logs-bucket"
+  tags = var.tags
+
+}
+
+
+# AWS Application Load Balancer (ALB) #
+resource "aws_lb" "alb_main" {
+  name               = var.alb_name
+  load_balancer_type = "application"
+  internal           = false
+  subnets            = var.subnet_ids
+  security_groups    = [aws_security_group.alb_sg.id]
+  enable_deletion_protection = true
+  access_logs {
+    bucket  = aws_s3_bucket.alb_access_logs.bucket
+    prefix  = "alb-access-logs"
+    enabled = true
+  }
+  drop_invalid_header_fields = true
+
+}
+
+# Target Group for the application 
+resource "aws_lb_target_group" "tg_app" {
+  name        = "mvp-app-tg"
+  port        = 80
+  protocol    = "HTTP"
   vpc_id      = var.vpc_id
+  target_type = "ip"
 
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = var.allowed_cidr_blocks
+  health_check {
+    healthy_threshold   = 3
+    unhealthy_threshold = 2
+    interval            = 20
+    timeout             = 3
+    protocol            = "HTTP"
+    path                = var.health_check_path
+    matcher             = "200"
   }
 
-  ingress {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = var.allowed_cidr_blocks
-  }
-
-    ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = var.allowed_cidr_blocks
-  }
-
-  # Allow all outbound traffic.
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = var.allowed_cidr_blocks
-  }
-
-  
+  tags = var.tags
 }
 
-//Application load balancer
-resource "aws_lb" "ecs_alb" {
- name               = var.alb_name
- internal           = false
- load_balancer_type = "application"
- security_groups    = [aws_security_group.alb_security_group.id]
- subnets = var.subnets
- enable_deletion_protection = false
+# HTTP Listener: Redirects to HTTPS #
+resource "aws_lb_listener" "listener_http" {
+  load_balancer_arn = aws_lb.alb_main.arn
+  port              = 80
+  protocol          = "HTTP"
 
-
- tags = {
-   Name = var.alb_name
- }
-
-}
-
-//HTTP listener
-resource "aws_lb_listener" "ecs_alb_http_listener" {
- load_balancer_arn = aws_lb.ecs_alb.arn
- port              = 80
- protocol          = "HTTP"
-
- default_action {
+  default_action {
     type = "redirect"
-
     redirect {
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_301"
     }
   }
-
 }
 
-//HTTPS listener
-resource "aws_lb_listener" "ecs_alb_https_listener" {
- load_balancer_arn = aws_lb.ecs_alb.arn
-  port              = "443"
+# HTTPS Listener: Forwards traffic to Target Group #
+resource "aws_alb_listener" "listener_https" {
+  load_balancer_arn = aws_lb.alb_main.arn
+  port              = 443
   protocol          = "HTTPS"
-  
-  //Add ACM resource using data block 
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
   certificate_arn = data.aws_acm_certificate.issued.arn
+
+
 
   default_action {
     type             = "forward"
-   target_group_arn = aws_lb_target_group.ecs_tg.arn
+    target_group_arn = aws_lb_target_group.tg_app.arn
+  }
+}
+
+# Security Group for ALB #
+resource "aws_security_group" "alb_sg" {
+  #checkov:skip=CKV_AWS_260: Allowing ingress from the internet (Testing purposes)
+  #checkov:skip=CKV_AWS_382: Allowing egress to the internet (Testing purposes)
+  name        = var.alb_name
+  description = "Security group for ALB"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow HTTP traffic from the internet"
   }
 
-  depends_on = [aws_lb.ecs_alb, aws_lb_target_group.ecs_tg]
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow HTTPS traffic from the internet"
+  }
 
-}
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all traffic to the internet"
+  }
 
-resource "aws_lb_target_group" "ecs_tg" {
- name        = var.target-group-name
- port        = 80
- protocol    = "HTTP"
- target_type = "ip"
- vpc_id      = var.vpc_id
-
- health_check {
-   path = "/"
- }
-
-}
-resource "aws_lb_target_group_attachment" "ecs-tg-group-attachment-aza" {
-  target_group_arn = aws_lb_target_group.ecs_tg.arn
-  target_id        = "10.0.3.4"
-  port             = 3000
 }

@@ -1,33 +1,49 @@
-# 🛡️ **ThreatModelOps Documentation**
+# 📊 **Cloud Cost Dashboard - Deployment Infrastructure**
 
 ---
 
 ## 📝 **Introduction**
 
-**ThreatModelOps** is a cloud-native solution that automates the deployment of a threat modelling application using **AWS**, **Docker**, **Terraform**, and **CI/CD pipelines**. This project streamlines infrastructure management, ensuring deployments are **secure**, **scalable**, and **efficient**. The application is securely hosted on **AWS** with a custom subdomain managed through **Amazon Route 53**.
+**Cloud Cost Dashboard** is a cloud-native solution that automates the deployment of a comprehensive cloud cost monitoring and reporting application using **AWS**, **Docker**, **Terraform**, and **CI/CD pipelines**. This project streamlines infrastructure management, ensuring deployments are **secure**, **scalable**, and **efficient**. The application is securely hosted on **AWS** with a custom subdomain managed through **Amazon Route 53**.
 
-Utilising **Amazon ECS** for container orchestration and **Terraform** for automated infrastructure provisioning, ThreatModelOps eliminates manual overhead while adhering to security best practices.
+Utilising **Amazon ECS** for container orchestration and **Terraform** for automated infrastructure provisioning, the Cloud Cost Dashboard eliminates manual overhead while providing real-time insights into cloud spending patterns.
+
+---
+
+## 📊 **Architecture Diagram**
+
+The following diagram illustrates the high-level architecture of the Cloud Cost Dashboard deployment:
+
+![Cloud Cost Dashboard Architecture](images/architecture-diagram.png)
+
+The architecture consists of:
+
+- **Application**: React-based cloud cost monitoring application containerised with Docker
+- **Infrastructure**: AWS resources managed by Terraform
+- **CI/CD**: GitHub Actions workflows for automated deployment
 
 ---
 
 ## 🎯 **Goal**
 
-The primary objectives of **ThreatModelOps** are to:
+The primary objectives of the **Cloud Cost Dashboard** deployment are to:
 
 - 🚀 Enable **rapid deployments** with minimal manual intervention.
 - 🔄 Implement **continuous integration and deployment (CI/CD)** for seamless updates.
 - 🔐 Integrate **security best practices** at every stage of deployment.
-- 📈 Build a **scalable and resilient** cloud infrastructure.
+- 📈 Build a **scalable and resilient** cloud infrastructure for cost monitoring.
+- 💰 Provide **real-time cost insights** and **automated reporting** capabilities.
 
 ---
 
 ## 🌟 **Key Features**
 
 - ⚙️ **Automated Infrastructure:** Deploy and manage AWS resources using Terraform.
-- 📦 **ECS Deployment:** Containerised application deployment with high availability and scalability.
+- 📦 **ECS Deployment:** Containerised cloud cost dashboard deployment with high availability and scalability.
 - 🔄 **CI/CD Pipelines:** Automated build, test, and deployment processes via GitHub Actions.
 - 🔐 **Security Focus:** Encrypted communications, secure access, and comprehensive monitoring.
 - 🌐 **Custom Domain:** Application hosted with HTTPS using ACM and managed via Route 53.
+- 📊 **Cost Analytics:** Real-time cloud cost monitoring and reporting features.
 
 ---
 
@@ -35,7 +51,7 @@ The primary objectives of **ThreatModelOps** are to:
 
 ### 🖥️ **AWS Services:**
 
-- 🐳 **ECS (Elastic Container Service):** Orchestrates Docker containers.
+- 🐳 **ECS (Elastic Container Service):** Orchestrates Docker containers for the cost dashboard.
 - 📦 **ECR (Elastic Container Registry):** Stores and manages Docker images.
 - 🌐 **ALB (Application Load Balancer)** with **ACM (AWS Certificate Manager)** for HTTPS.
 - 🗺️ **Route 53:** DNS management.
@@ -45,7 +61,7 @@ The primary objectives of **ThreatModelOps** are to:
 ### 🛠️ **Other Tools:**
 
 - 📝 **Terraform:** Infrastructure as Code (IaC) for resource provisioning.
-- 🐳 **Docker:** Containerisation platform for the application.
+- 🐳 **Docker:** Containerisation platform for the cost dashboard application.
 - 🔄 **GitHub Actions:** Manages CI/CD workflows.
 
 ---
@@ -69,8 +85,8 @@ Ensure you have the following installed and configured:
 #### 1️⃣ **Clone the Repository**
 
 ```bash
-git clone https://github.com/your-repo/threatmodelops.git
-cd threatmodelops
+git clone https://github.com/your-repo/cloud-cost-dashboard.git
+cd cloud-cost-dashboard
 ```
 
 ---
@@ -91,11 +107,11 @@ This sets up your AWS Access Key, Secret Access Key, and default region.
 # Navigate to the application directory
 cd app
 
-docker build -t threatmodel-app .
-aws ecr create-repository --repository-name threatmodel-app  # If not already created
+docker build -t cloud-cost-dashboard .
+aws ecr create-repository --repository-name cloud-cost-dashboard  # If not already created
 
-docker tag threatmodel-app:latest <aws_account_id>.dkr.ecr.<region>.amazonaws.com/threatmodel-app:latest
-docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/threatmodel-app:latest
+docker tag cloud-cost-dashboard:latest <aws_account_id>.dkr.ecr.<region>.amazonaws.com/cloud-cost-dashboard:latest
+docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/cloud-cost-dashboard:latest
 ```
 
 ✅ This builds the Docker image and pushes it to **Amazon ECR**.
@@ -153,7 +169,7 @@ After deployment:
 
 1. Navigate to **Route 53** and find your hosted zone.
 2. Copy the configured **domain name**.
-3. Open it in your browser to access the application via HTTPS. 🌐
+3. Open it in your browser to access the Cloud Cost Dashboard via HTTPS. 🌐
 
 ---
 
@@ -180,6 +196,6 @@ After deployment:
 
 ## 🖼️ **Visual Reference**
 
-![ThreatModelOps Application](images/working-app.png)
+![Cloud Cost Dashboard Application](images/app.png)
 
 ---
