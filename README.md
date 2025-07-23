@@ -120,12 +120,16 @@ docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/cloud-cost-dashboard
 
 #### 4️⃣ **Deploy Infrastructure with Terraform**
 
+First create a terraform.tfvars file that contains the necessary input values you need to deploy the infrastructure
+
+Next follow this workflow cycle
+
 ```bash
 cd terraform
 terraform init  # Initialise Terraform
 terraform validate  # Validate Terraform code
 terraform plan  # Preview infrastructure changes
-terraform apply -auto-approve  # Apply changes
+terraform apply -auto-approve -var-file=your-terraform.tfvars-file # Apply changes
 ```
 
 ✅ Provisions the following infrastructure:
@@ -148,16 +152,24 @@ Located at: `.github/workflows/ci.yml`
 - Builds Docker images and pushes them to ECR.
 - Ensures images are up-to-date on code changes.
 
-##### 🚀 **CD Workflow (Deploy Infrastructure)**
+##### 🚀 **Plan & Apply Workflow (Deploy Infrastructure)**
 
-Located at: `.github/workflows/cd.yml`
+Located at: `.github/workflows/tfplan.yml`
+
+- Formats the terraform infrastructure scripts.
+- Tests for security vulnerabilities.
+- Creates an execution plan of the infrastructure that will be deployed to AWS.
+
+##### 🚀 **Deploy Workflow (Deploy Infrastructure)**
+
+Located at: `.github/workflows/tfapply.yml`
 
 - Deploys Terraform-managed infrastructure to AWS.
 - Requires GitHub secrets for AWS credentials.
 
 ##### 🗑️ **Destroy Workflow (Clean Up Resources)**
 
-Located at: `.github/workflows/destroy.yml`
+Located at: `.github/workflows/tfdestroy.yml`
 
 - Tears down infrastructure when no longer needed.
 

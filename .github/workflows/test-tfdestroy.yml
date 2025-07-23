@@ -1,11 +1,8 @@
-name: Terraform Destroy workflow
+# .github/workflows/local-terraform-destroy.yml
+name: Local Terraform Destroy (Simulated)
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Terraform Apply"]
-    types:
-      - completed
 
 env:
   AWS_REGION: eu-west-2
@@ -39,11 +36,9 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Workspace Init
-        working-directory: terraform
         run: |
           terraform init
           terraform workspace select ${{env.ENVIRONMENT_DEV}} || terraform workspace new ${{env.ENVIRONMENT_DEV}}
 
-      - name: Terraform Workspace Destroy
-        working-directory: terraform
+      - name: Terraform Destroy
         run: terraform destroy -auto-approve -var-file="environments/${{env.ENVIRONMENT_DEV}}/${{env.ENVIRONMENT_DEV}}.terraform.tfvars"

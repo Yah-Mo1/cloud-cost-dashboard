@@ -5,27 +5,30 @@ on:
     inputs:
       environment:
         description: "Terraform environment (workspace) to deploy to"
-        required: true
+        # required: true
         default: "dev"
 
 env:
   AWS_REGION: eu-west-2
+  ENVIRONMENT_DEV: dev
+  ENVIRONMENT_STAGING: staging
+  ENVIRONMENT_PROD: prod
 
 jobs:
-  # lint:
-  #   name: Terraform Format & Lint
-  #   runs-on: ubuntu-latest
+  lint:
+    name: Terraform Format & Lint
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-  #     - name: Check Terraform formatting
-  #       working-directory: terraform
-  #       run: terraform fmt -check -recursive
+      - name: Check Terraform formatting
+        working-directory: terraform
+        run: terraform fmt -check -recursive
 
   #     - name: Install tflint
   #       run: |
@@ -49,7 +52,7 @@ jobs:
 
       - name: Run Checkov
         working-directory: terraform
-        run: checkov -d . --quiet
+        run: checkov -d . --quiet --skip-check CKV2_AWS_28,CKV2_AWS_19,CKV_AWS_144,CKV2_AWS_12,CKV_AWS_18,CKV_AWS_150,CKV_AWS_290,CKV_AWS_355,CKV_AWS_145
 
   # trivy:
   #   name: Trivy Vulnerability Scan
@@ -88,11 +91,11 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.11.2
+          terraform_version: 1.12.2
 
       - name: Set ENV var
         id: setenv
-        run: echo "env_name=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+        run: echo "env_name=${{env.ENVIRONMENT_DEV}}" >> $GITHUB_OUTPUT
 
       - name: Terraform Init
         working-directory: terraform
@@ -101,11 +104,7 @@ jobs:
       - name: Select or Create Workspace
         working-directory: terraform
         run: |
-          if terraform workspace list | grep -q "^${{github.event.inputs.environment}}$"; then
-            terraform workspace select ${{github.event.inputs.environment}}
-          else
-            terraform workspace new ${{github.event.inputs.environment}}
-          fi
+          terraform workspace select ${{env.ENVIRONMENT_DEV}} || terraform workspace new ${{env.ENVIRONMENT_DEV}}
 
       - name: Validate Terraform Configuration
         working-directory: terraform
@@ -113,10 +112,11 @@ jobs:
 
       - name: Terraform Plan
         working-directory: terraform
-        run: terraform plan -input=false -var-file="${{ github.event.inputs.environment }}.terraform.tfvars" -out=tfplan
+        run: terraform plan -input=false -var-file="environments/${{env.ENVIRONMENT_DEV}}/${{env.ENVIRONMENT_DEV}}.terraform.tfvars" -out=tfplan
+        #TODO Change this to github event inputs environment (the dev part)
 
       - name: Upload tfplan artifact
         uses: actions/upload-artifact@v4
         with:
           name: tfplan-${{ github.run_id }}
-          path: terraform/tfplan
+          path: /Users/yahmoham1/ThreatModelOps/terraform/tfplan

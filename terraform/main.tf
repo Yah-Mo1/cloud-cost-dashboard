@@ -11,12 +11,12 @@ module "networking" {
 }
 
 module "alb" {
-  source          = "./modules/alb"
-  subnet_ids      = module.networking.public_subnets
-  alb_name        = var.alb_name
-  vpc_id          = module.networking.vpc_id
-  domain_name     = var.domain_name
-  tags            = var.tags
+  source      = "./modules/alb"
+  subnet_ids  = module.networking.public_subnets
+  alb_name    = var.alb_name
+  vpc_id      = module.networking.vpc_id
+  domain_name = var.domain_name
+  tags        = var.tags
 }
 
 module "ecs" {
@@ -25,13 +25,14 @@ module "ecs" {
   vpc_id             = module.networking.vpc_id
   alb_security_group = module.alb.alb_security_group
   target_group_arn   = module.alb.target_group_arn
+  ecr_repo_name      = var.ecr_repo_name
 
 }
 
 module "autoscaling" {
-  source      = "./modules/autoscaling"
-  ecs_cluster = module.ecs.ecs_cluster_id
-  ecs_service = module.ecs.ecs_service_id
+  source           = "./modules/autoscaling"
+  ecs_cluster_name = module.ecs.ecs_cluster_name
+  ecs_service_name = module.ecs.ecs_service_name
 }
 
 module "route53" {

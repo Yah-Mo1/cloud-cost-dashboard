@@ -2,7 +2,7 @@
 resource "aws_appautoscaling_target" "ecs_target" {
   max_capacity       = var.max_capacity
   min_capacity       = var.min_capacity
-  resource_id        = "service/${var.ecs_cluster.name}/${var.ecs_service.name}"
+  resource_id        = "service/${var.ecs_cluster_name}/${var.ecs_service_name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 }
@@ -10,7 +10,7 @@ resource "aws_appautoscaling_target" "ecs_target" {
 
 // Scale Out Policy
 resource "aws_appautoscaling_policy" "ecs_cpu" {
-  name               = "${var.ecs_cluster.name}-scale-out"
+  name               = "${var.ecs_cluster_name}-scale-out"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
@@ -29,7 +29,7 @@ resource "aws_appautoscaling_policy" "ecs_cpu" {
 
 // Scale In Policy
 resource "aws_appautoscaling_policy" "scale_in" {
-  name               = "${var.ecs_cluster.name}-scale-in"
+  name               = "${var.ecs_cluster_name}-scale-in"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
@@ -50,7 +50,7 @@ resource "aws_appautoscaling_policy" "scale_in" {
 
 // Memory Scaling Policy
 resource "aws_appautoscaling_policy" "ecs_memory" {
-  name = "${var.ecs_cluster.name}-scale-out-memory"
+  name = "${var.ecs_cluster_name}-scale-out-memory"
 
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs_target.resource_id

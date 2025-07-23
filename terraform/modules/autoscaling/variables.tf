@@ -1,10 +1,10 @@
 
 
-variable "ecs_cluster" {
+variable "ecs_cluster_name" {
   description = "The name of the ECS cluster"
 }
 
-variable "ecs_service" {
+variable "ecs_service_name" {
   description = "The name of the ECS service"
 }
 

@@ -29,30 +29,30 @@ resource "aws_kms_key" "cloudwatch_logs_key" {
         Sid    = "Enable IAM User Permissions"
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/awsUser"
         }
         Action   = "kms:*"
         Resource = "*"
       },
       {
-          Sid = "Allow CloudWatch Logs to encrypt and decrypt"
-          Effect = "Allow"
-          Principal = {
-            Service = "logs.amazonaws.com"
+        Sid    = "Allow CloudWatch Logs to encrypt and decrypt"
+        Effect = "Allow"
+        Principal = {
+          Service = "logs.amazonaws.com"
+        }
+        Action = [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey"
+        ]
+        Resource = "*"
+        Condition = {
+          ArnEquals = {
+            "kms:EncryptionContext:aws:logs:arn" = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:ecs-log-group"
           }
-          Action = [
-            "kms:Encrypt",
-            "kms:Decrypt",
-            "kms:ReEncrypt*",
-            "kms:GenerateDataKey*",
-            "kms:DescribeKey"
-          ]
-          Resource = "*"
-          Condition = {
-            ArnLike = {
-              "kms:EncryptionContext:aws:logs:log-group" = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:*"
-            }
-          }
+        }
       }
     ]
   })
@@ -63,6 +63,8 @@ resource "aws_cloudwatch_log_group" "ecs_log_group" {
   name              = "ecs-log-group"
   retention_in_days = 365
   kms_key_id        = aws_kms_key.cloudwatch_logs_key.arn
+
+  depends_on = [aws_kms_key.cloudwatch_logs_key]
 }
 
 
@@ -105,7 +107,7 @@ resource "aws_ecs_task_definition" "ecs-task-definition" {
     cpu            = var.ecs_task_cpu
     memory         = var.ecs_task_memory
     ecs_log_group  = aws_cloudwatch_log_group.ecs_log_group.name
-    logs_prefix    = aws_cloudwatch_log_group.ecs_log_group.name_prefix
+    logs_prefix    = aws_cloudwatch_log_group.ecs_log_group.name
   })
   runtime_platform {
     operating_system_family = var.operating_system_family
@@ -157,6 +159,8 @@ resource "aws_ecs_service" "ecs-service" {
     security_groups = [aws_security_group.ecs_security_group.id]
 
   }
+
+  depends_on = [aws_ecs_task_definition.ecs-task-definition]
 }
 
 
