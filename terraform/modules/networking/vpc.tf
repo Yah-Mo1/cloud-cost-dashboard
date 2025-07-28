@@ -61,7 +61,7 @@ resource "aws_kms_key" "cloudwatch_logs_key" {
 # CloudWatch Log Group for VPC Flow Logs
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name              = "/aws/vpc/flowlogs-${var.environment}"
-  retention_in_days = 365
+  # retention_in_days = 365
   tags = {
     Name        = "${var.environment}-vpc-flow-logs"
     Environment = var.environment

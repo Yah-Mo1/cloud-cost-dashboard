@@ -293,8 +293,6 @@ resource "aws_alb_listener" "listener_https" {
 
 # Security Group for ALB #
 resource "aws_security_group" "alb_sg" {
-  #checkov:skip=CKV_AWS_260: Allowing ingress from the internet (Testing purposes)
-  #checkov:skip=CKV_AWS_382: Allowing egress to the internet (Testing purposes)
   name        = var.alb_name
   description = "Security group for ALB"
   vpc_id      = var.vpc_id

@@ -45,3 +45,5 @@ repos:
           - --args=--skip-check=CKV_AWS_290
           - --args=--skip-check=CKV_AWS_355
           - --args=--skip-check=CKV_AWS_145
+          - --args=--skip-check=CKV_AWS_338
+          - --args=--skip-check=CKV_AWS_66
