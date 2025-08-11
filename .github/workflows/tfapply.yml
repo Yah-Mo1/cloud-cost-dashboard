@@ -6,6 +6,10 @@ on:
     types:
       - completed
 
+permissions:
+  contents: read
+  id-token: write
+
 env:
   AWS_REGION: eu-west-2
   ENVIRONMENT_DEV: dev
